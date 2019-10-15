@@ -1,0 +1,15 @@
+T  := a b c d e f g h i j
+TT := $(foreach x, $(T), $(foreach y, $(T),$(x)$(y)))
+
+test: $(TT)
+
+define rule =
+$(1)$(2): $(1) $(2)
+endef
+
+$(foreach x, $(T), $(foreach y, $(T), $(eval $(call rule,$(x),$(y)))))
+
+$(T) $(TT):
+	@+./jobhog bash -c 'echo "$@: ###"; sleep 0.$$RANDOM'
+
+.PHONY: $(TT) $(T) test
